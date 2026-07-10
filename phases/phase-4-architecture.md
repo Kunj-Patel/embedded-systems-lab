@@ -2,7 +2,7 @@
 
 # Phase 4 — System Architecture (Weeks 18-20)
 
-**Goal:** Transition from firmware developer to systems engineer. This phase introduces no new peripherals and no new project — it takes `hal/` and `sensor-hub`, both already working and tested, and refactors them into a formally-documented layered architecture. `sensor-core/` is not touched by this refactor; it's already a clean, standalone library, and stays that way. This is deliberately a refactor of a live system under its own test suite, not a fresh template — real engineering teams harden existing systems far more often than they greenfield new ones, and doing that under test coverage you already trust is the actual skill being taught here.
+**Goal:** Transition from firmware developer to systems engineer. This phase introduces no new peripherals and no new project — it takes `hal/` and `sensor-hub`, both already working and tested, and refactors them into a formally-documented layered architecture under their own test suite. `sensor-core/` is untouched. Real engineering teams harden existing systems far more often than they greenfield new ones — that's the actual skill being taught here.
 
 Day themes as in [ROADMAP.md](../ROADMAP.md#weekly-schedule), with Friday's architecture-interview practice deepening into full mock-interview format every week.
 
@@ -34,7 +34,7 @@ Day themes as in [ROADMAP.md](../ROADMAP.md#weekly-schedule), with Friday's arch
 **Deliverables:**
 - Update the `sensor-hub` README to document the now-formalized layered architecture (a diagram of `drivers/kernel/middleware/application` over `hal/`, plus where `sensor-core` sits as a linked library underneath it all, is worth writing out).
 - Write a short design document (in `notes/architecture/`) defending at least three non-obvious architectural decisions made across Phases 1-4 — including why `sensor-core`/`sensor-hub` is a library-consumer split rather than one project renamed over time — why this and not the alternative.
-- Full retrospective across Phases 1-4: what part of the architecture would you redesign now, knowing what you know after building and refactoring the Sensor Hub?
+- Full retrospective across Phases 1-4: what part of the architecture would you redesign now, knowing what you know after building and refactoring `sensor-hub`?
 
 **Friday — full mock interview:** present `sensor-hub`'s now-layered architecture cold, as if to an interviewer, defending trade-offs under questioning.
 

@@ -2,7 +2,7 @@
 
 # Phase 3 — RTOS Ground-Up (Weeks 13-17)
 
-**Goal:** Think in systems. Build the scheduling mechanics from scratch before adopting FreeRTOS, per the ground-up-then-industry-standard philosophy — the point is to be able to explain what FreeRTOS is doing under the hood, not just call its API. This phase also creates **`sensor-hub`** — a new project that links the Phase 1-2 `sensor-core` library into a proper multi-tasking system, without modifying `sensor-core` itself — and, since "what happens when a task hangs" is a scheduling question, is where watchdog and fault-handling naturally belong, rather than being bolted on at the very end of the roadmap.
+**Goal:** Think in systems. Build the scheduling mechanics from scratch before adopting FreeRTOS — the point is to explain what FreeRTOS is doing under the hood, not just call its API. This phase also creates **`sensor-hub`** (see [Repository Structure](../ROADMAP.md#repository-structure)), and, since "what happens when a task hangs" is a scheduling question, is where watchdog and fault-handling belong, rather than being bolted on at the end of the roadmap.
 
 Day themes as in [ROADMAP.md](../ROADMAP.md#weekly-schedule). Algorithms continue daily — this phase's focus: dynamic programming basics, recursion.
 
@@ -43,8 +43,8 @@ Day themes as in [ROADMAP.md](../ROADMAP.md#weekly-schedule). Algorithms continu
 ## Week 16 — `sensor-hub`: Composing `sensor-core` Into FreeRTOS Tasks
 
 **Deliverables:**
-- **New project — `sensor-hub` (`projects/sensor-hub/`):** scaffold a new CMake target that links `sensor-core` (as a library dependency, unmodified) plus `hal/` plus FreeRTOS. This is a new directory, not a rename — `sensor-core/` keeps existing exactly as Phase 1-2 left it, and `sensor-hub/` is what depends on it going forward. See [Repository Structure](../ROADMAP.md#repository-structure) for the split.
-- Decompose the Phase 1-2 application (state machine, `ISensor` backends, `RingBuffer`, CLI — all still living in `sensor-core`) into separate FreeRTOS tasks in `sensor-hub/tasks/`: a Sensor task per real sensor (SPI/I2C from Phase 2), a Logger task, a CLI task — communicating results via queues, no global variables/shared state. Each task is a thin wrapper that calls into `sensor-core`'s existing, tested logic — this is composition of working code into a concurrent architecture, not a rewrite, and not a modification of `sensor-core` itself.
+- **New project — `sensor-hub` (`projects/sensor-hub/`):** scaffold a new CMake target that links `sensor-core` (as a library dependency, unmodified) plus `hal/` plus FreeRTOS.
+- Decompose the Phase 1-2 application (state machine, `Sensor` backends, `RingBuffer`, CLI — all still living in `sensor-core`) into separate FreeRTOS tasks in `sensor-hub/tasks/`: a Sensor task per real sensor (SPI/I2C from Phase 2), a Logger task, a CLI task — communicating results via queues, no global variables/shared state. Each task is a thin wrapper that calls into `sensor-core`'s existing, tested logic.
 - Note on why queues/message-passing were chosen over shared memory + locks for inter-task communication in this design, and on why `sensor-core` staying hardware/RTOS-agnostic (no task or queue types leaking into it) keeps it independently testable on the Mac forever, regardless of what wraps it.
 
 **Friday architecture prompt:** "Design the task/queue topology for a sensor hub with 4 sensors, a logger, and a CLI. Where do you need mutexes versus queues, and why?"

@@ -2,7 +2,7 @@
 
 # Phase 6 — Capstone: Industrial Sensor Platform (Weeks 25-28)
 
-**Goal:** Ship `sensor-hub` — created in Phase 3 linking `sensor-core` (unchanged since Phase 1), hardened in Phase 3 (RTOS + watchdog + fault handling) and Phase 5 (DMA logging + bootloader) — as a finished, demoable Industrial Sensor Platform. This phase is deliberately *not* where new subsystems are learned for the first time: watchdog, fault handling, and the bootloader already exist and work. Capstone weeks are for OTA (extending the bootloader), power management, configuration, full CI/tooling, and final integration — the things that only make sense once everything underneath them is stable.
+**Goal:** Ship `sensor-hub` — hardened in Phase 3 (RTOS + watchdog + fault handling) and Phase 5 (DMA logging + bootloader) — as a finished, demoable Industrial Sensor Platform. No new subsystems are learned for the first time here: watchdog, fault handling, and the bootloader already exist and work. Capstone weeks are for OTA (extending the bootloader), power management, configuration, full CI/tooling, and final integration — things that only make sense once everything underneath them is stable.
 
 Day themes as in [ROADMAP.md](../ROADMAP.md#weekly-schedule). Repo location: `projects/sensor-hub/` (git-tagged as the Industrial Sensor Platform at final release — a release tag, not a new directory or rename).
 

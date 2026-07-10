@@ -10,15 +10,15 @@ This document is the single source of truth for this repository's engineering jo
 
 "Week N" in this document is a unit of content, not a guaranteed Mon-Sun calendar week. This section exists because the real calendar this roadmap runs against isn't uniform — an internship ending August 21, 2026, then a 2-course grad semester starting September — and pretending otherwise is how plans like this quietly die at the first exam week.
 
-**Internship window (now through ~Aug 21, 2026, ~6 weeks at near-full pace):** front-load [Phase 0](phases/phase-0-raw-c.md) and [Phase 1](phases/phase-1-modern-cpp.md) (Weeks 1-7) here. These are the toolchain-bring-up and pure-software weeks — no Nucleo dependency, no hardware lead time, and they benefit most from unbroken daily momentum. At near-full pace, 7 weeks of content in ~6 calendar weeks is realistic; if it slips to 7-8 calendar weeks, that's fine — Phase 2 has its own hardware/toolchain lead time regardless (order the Nucleo now if not already in hand, so it's not the blocker once Phase 1 closes).
+**Internship window (now through ~Aug 21, 2026):** front-load [Phase 0](phases/phase-0-raw-c.md) and [Phase 1](phases/phase-1-modern-cpp.md) (Weeks 1-7) here — pure-software weeks with no Nucleo dependency, well suited to unbroken daily momentum. 7 weeks of content in ~6 calendar weeks is realistic; order the Nucleo now so it's in hand before Phase 2.
 
-**Semester window (Sept 2026 onward, 2 grad courses):** 15-25 hrs/week is, if anything, *at or above* this roadmap's implicit pace (the Mon-Sun day-theme structure was calibrated around roughly 12-15 hrs/week for a self-paced learner, not a full-time job) — so the semester is not automatically slower in aggregate. The real risk is **variance, not average**: exam weeks spike coursework and crush bootcamp time to near zero for a week or two, even in a semester that averages out fine. Plan for that explicitly rather than being surprised by it:
+**Semester window (Sept 2026 onward, 2 grad courses):** 15-25 hrs/week is at or above this roadmap's implicit pace, so the semester isn't automatically slower — the real risk is variance, not average: exam weeks crush bootcamp time to near zero even in a semester that averages out fine.
 
 - **Normal weeks:** run the roadmap as written, one phase-file week per ~1 calendar week.
-- **Exam/high-load weeks (know these in advance from the syllabus):** don't try to compress a full week's deliverables into a bad week. Either pause the bootcamp entirely for that week (protect the exam, resume next week exactly where you left off), or — only if the week's deliverable is genuinely light — let it stretch across two calendar weeks instead of forcing it into one. Never silently drop a deliverable to stay "on schedule"; a schedule that's honestly two weeks behind is fine, one that's quietly missing exam-week content is not.
-- **Log every exam-week pause in the Sunday retro (Rule 4)** the same as any other deviation — one line ("paused for midterms, resuming Week N") is enough. This is what keeps the plan honest without turning every busy week into a crisis.
+- **Exam/high-load weeks:** don't compress a full week's deliverables into a bad week. Pause the bootcamp for that week and resume exactly where you left off, or let a genuinely light week's deliverable stretch across two calendar weeks. Never silently drop a deliverable to stay "on schedule."
+- **Log every exam-week pause in the Sunday retro (Rule 4)** — one line ("paused for midterms, resuming Week N") is enough.
 
-**Net effect:** the 28 weeks of *content* stay exactly as designed (nothing cut, nothing thinned) — the calendar it's spread across stretches to fit real life, likely landing somewhere around 8-10 calendar months end-to-end rather than a strict 6.5, depending on how many exam weeks actually cost a full pause versus just a lighter week. That's a normal, sane outcome for a self-taught program running alongside a job and a degree — not a sign the plan failed.
+**Net effect:** the 28 weeks of content stay exactly as designed — the calendar stretches to fit real life, likely landing around 8-10 calendar months end-to-end rather than a strict 6.5. That's a normal outcome for a self-taught program running alongside a job and a degree, not a sign the plan failed.
 
 ## Mission
 
@@ -99,10 +99,10 @@ Every phase file has Friday architecture prompts and periodic full mock intervie
 
 ## Background / Starting Baseline
 
-- **Professional background:** mechatronics engineering, 2 years as a firmware developer writing C for STM32 MCUs, built with Make. This is real, relevant experience — Phase 0 is calibrated as a fast validation gate, not a teaching phase, specifically because of this.
-- **Academic background:** currently pursuing a Master's in Computer Engineering; coursework completed in computer architecture, machine learning, and FPGA design. Where a later phase's theory overlaps this coursework (e.g., cache/memory hierarchy in Phase 5, some scheduling theory in Phase 3), the roadmap keeps full coverage deliberately — it reinforces via a hands-on/embedded lens the coursework didn't use, rather than being skipped.
+- **Professional background:** mechatronics engineering, 2 years as a firmware developer writing C for STM32 MCUs, built with Make — real, relevant experience, which is why Phase 0 is a fast validation gate rather than a teaching phase.
+- **Academic background:** currently pursuing a Master's in Computer Engineering; coursework completed in computer architecture, machine learning, and FPGA design. Where later theory overlaps this coursework (cache/memory hierarchy in Phase 5, scheduling theory in Phase 3), the roadmap keeps full coverage — it reinforces via a hands-on/embedded lens the coursework didn't use.
 - **Environment:** Apple M1 Pro, VSCode, CMake, Ninja, clang++/LLVM, ld64, clang-tidy, clang-format — a different toolchain from the Make-based one used professionally, so the switch itself is a real (if secondary) learning item in Phase 1.
-- **Hardware target:** STM32 Nucleo (specific model TBD — pick before Phase 2, Week 8). Different from whichever STM32 part is used professionally, but the same family — bring-up mechanics should feel familiar; the HAL/mock-backend architecture and the RTOS/architecture work built on top of it will not.
+- **Hardware target:** STM32 Nucleo-F401RE / F411RE / F446RE (Cortex-M4F) — see [phases/phase-2-embedded-fundamentals.md](phases/phase-2-embedded-fundamentals.md) for exact model confirmation before Week 8. Different from whichever STM32 part is used professionally, but the same family — bring-up mechanics should feel familiar; the HAL/mock-backend architecture and the RTOS/architecture work built on top of it will not.
 - **Modern C++:** the real gap. Self-rated 2-4/10 across references, RAII, constructors/destructors, move semantics, templates, constexpr, smart pointers, STL algorithms, `std::optional`/`variant`/`span`, lambdas — this is what two years of embedded C doesn't cover, and where Phase 1's reclaimed extra week (Week 2) is spent.
 - **Toolchain experience:** professionally used Make for STM32 builds; new to CMake, Ninja, GoogleTest, clang-format, clang-tidy, and Doxygen specifically — all taught explicitly from first use starting Phase 1, nothing assumed.
 - **Repository:** `github.com/Kunj-Patel/embedded-systems-lab` (already initialized, README and `.gitignore` in place).
@@ -133,13 +133,13 @@ embedded-systems-lab/
 │   └── performance/
 │
 ├── hal/                    # The shared Firmware Simulator: interfaces + two backends (see below)
-│   ├── include/             # IGpio, ILed, IButton, IUart, ISpi, II2c, ITimer, ...
+│   ├── include/             # Gpio, Led, Button, Uart, Spi, I2c, Timer, ...
 │   ├── mock/                 # Host backend — runs on the Mac, used in unit tests
 │   └── stm32/                 # Real backend — register-level STM32 implementation
 │
 ├── projects/               # Complete engineering artifacts, portfolio-grade
 │   ├── sensor-core/         # Phase 1 onward: hardware-agnostic application library — never renamed, never abandoned
-│   │   ├── include/           # StateMachine, ISensor, RingBuffer<T,N>, threshold/alerting policy, Config
+│   │   ├── include/           # StateMachine, Sensor, RingBuffer<T,N>, threshold/alerting policy, Config
 │   │   ├── src/
 │   │   └── tests/              # GoogleTest against hal/mock/ only — no RTOS, no board, ever
 │   │
@@ -152,7 +152,7 @@ embedded-systems-lab/
     └── leetcode/
 ```
 
-**One project, not five — and a real library/consumer split, not a rename.** `sensor-core/` is what Phase 1 actually builds: a hardware-agnostic application library (state machine, `ISensor`, `RingBuffer`, threshold/alerting), designed via dependency injection specifically so it has no concept of tasks, queues, or an RTOS. It never gets renamed or abandoned — it's linked against for the rest of the roadmap. `sensor-hub/` doesn't exist until Phase 3, when there's finally something to wrap `sensor-core/` in: it links `sensor-core/` plus `hal/` plus FreeRTOS, and every later phase hardens it in place (watchdog and fault handling in Phase 3, layered architecture in Phase 4, DMA logging and a bootloader in Phase 5, OTA/power/config/CI in Phase 6) rather than being replaced by a new named project each phase. At final release (Phase 6), `sensor-hub/` can be git-tagged as the "Industrial Sensor Platform" — that's a release tag, not a third directory name. See [28-Week Phase Breakdown](#28-week-phase-breakdown) for exactly what's added where.
+**One project, not five — and a real library/consumer split, not a rename.** `sensor-core/` is what Phase 1 actually builds: a hardware-agnostic application library (state machine, `Sensor`, `RingBuffer`, threshold/alerting), designed via dependency injection specifically so it has no concept of tasks, queues, or an RTOS. It never gets renamed or abandoned — it's linked against for the rest of the roadmap. `sensor-hub/` doesn't exist until Phase 3, when there's finally something to wrap `sensor-core/` in: it links `sensor-core/` plus `hal/` plus FreeRTOS, and every later phase hardens it in place (watchdog and fault handling in Phase 3, layered architecture in Phase 4, DMA logging and a bootloader in Phase 5, OTA/power/config/CI in Phase 6) rather than being replaced by a new named project each phase. At final release (Phase 6), `sensor-hub/` can be git-tagged as the "Industrial Sensor Platform" — that's a release tag, not a third directory name. See [28-Week Phase Breakdown](#28-week-phase-breakdown) for exactly what's added where.
 
 ---
 
@@ -163,7 +163,7 @@ This is the one structural idea that ties the whole roadmap together, and it sta
 The core design: **one interface, two backends.**
 
 ```
-                 IGpio / IUart / ISpi / II2c / ITimer ...
+                 Gpio / Uart / Spi / I2c / Timer ...
                               (hal/include/)
                     ▲                          ▲
                     │                          │
@@ -178,7 +178,7 @@ The core design: **one interface, two backends.**
 
 Every peripheral driver is designed against an interface first. The mock backend lets application logic (state machines, services, business rules) be built and unit-tested entirely on the Mac, at full speed, with GoogleTest — no board required for daily work. The STM32 backend implements the same interface at the register level and is verified against real hardware during dedicated Nucleo sessions.
 
-This is why `sensor-core` and the `sensor-hub` that later links it never reinvent GPIO or UART mocks — they depend on `hal/`, and swapping from simulation to real hardware is a link-time backend swap, not a rewrite. This is also what makes Rule 3 (unit tests for everything) practical for embedded work: the hardware boundary is mocked, not skipped.
+Swapping from simulation to real hardware is a link-time backend swap, not a rewrite — this is what makes Rule 3 (unit tests for everything) practical for embedded work.
 
 The interface set grows over the roadmap: GPIO/LED/Button (Phase 1) → Timer/UART/SPI/I2C/ADC/Interrupts (Phase 2) → Scheduler primitives (Phase 3) → formalized HAL/BSP layering (Phase 4) → DMA (Phase 5).
 
@@ -224,9 +224,9 @@ Topics:
 - Templates and basic generic programming.
 - Software design: SOLID, composition over inheritance, interfaces, dependency injection.
 
-**`hal/` begins here:** design `IGpio`, `ILed`, `IButton`, `ISensor` and their mock backend — this is the original "Firmware Simulator" scope, unit-tested with GoogleTest.
+**`hal/` begins here:** design `Gpio`, `Led`, `Button`, `Sensor` and their mock backend — this is the original "Firmware Simulator" scope, unit-tested with GoogleTest.
 
-**Project:** `sensor-core` (`projects/sensor-core/`) — a hardware-agnostic application library, PC-only, pure software: state machine, mock `ISensor` ingestion, threshold/alerting, DI, no hardware registers, no RTOS. This isn't a phase-1 exercise that gets renamed or discarded later — it's the permanent core library every later phase links against.
+**Project:** `sensor-core` (`projects/sensor-core/`) — a hardware-agnostic application library, PC-only, pure software: state machine, mock `Sensor` ingestion, threshold/alerting, DI, no hardware registers, no RTOS. The permanent core library every later phase links against (see [Repository Structure](#repository-structure)).
 
 **Algorithms:** linked lists, stacks, queues.
 
@@ -248,7 +248,7 @@ For each peripheral, ask: why does it exist, what problem does it solve, what ar
 
 Toolchain additions: `arm-none-eabi-gcc`, OpenOCD/ST-Link, register-level programming.
 
-**Project:** extend `hal/` with the STM32 backend for every interface above, and plug real sensors (SPI, I2C, ADC) into `sensor-core`'s `ISensor` interface from Phase 1 — the same library now runs on real hardware, verified to behave identically to its mock-backed Phase 1 version. Still `sensor-core/`, still no RTOS — that's Phase 3.
+**Project:** extend `hal/` with the STM32 backend for every interface above, and plug real sensors (SPI, I2C, ADC) into `sensor-core`'s `Sensor` interface from Phase 1 — the same library now runs on real hardware, verified to behave identically to its mock-backed Phase 1 version. Still `sensor-core/`, still no RTOS — that's Phase 3.
 
 **Algorithms:** trees, basic graph traversal (DFS/BFS).
 
@@ -265,7 +265,7 @@ Toolchain additions: `arm-none-eabi-gcc`, OpenOCD/ST-Link, register-level progra
 - Intentionally create deadlocks, race conditions, starvation, and priority inversion — then fix them.
 - **Hard-fault deep dive:** write a `HardFault_Handler` reading `CFSR`/`HFSR` and the stacked exception frame; diagnose at least two deliberately-triggered hard faults from register state alone.
 
-**Project:** `sensor-hub` (`projects/sensor-hub/`) is created here — it links `sensor-core` (unchanged, still hardware-agnostic) plus `hal/` plus FreeRTOS into per-sensor/Logger/CLI/Watchdog tasks communicating via queues and events (no global variables). This is composition, not a rewrite: `sensor-core`'s state machine and `ISensor` logic move into tasks unmodified, wrapped rather than reimplemented. Watchdog and fault-handling are introduced here, not deferred to the capstone, because "what happens when a task hangs" is a scheduling-native question.
+**Project:** `sensor-hub` (`projects/sensor-hub/`) is created here — it links `sensor-core` (unchanged) plus `hal/` plus FreeRTOS into per-sensor/Logger/CLI/Watchdog tasks communicating via queues and events (no global variables). Watchdog and fault-handling are introduced here, not deferred to the capstone, because "what happens when a task hangs" is a scheduling-native question.
 
 **Algorithms:** dynamic programming basics, recursion.
 
@@ -279,7 +279,7 @@ Toolchain additions: `arm-none-eabi-gcc`, OpenOCD/ST-Link, register-level progra
 - Dependency injection for testability — mock sensors injected into business logic for PC-side unit tests.
 - Weekly architecture-interview practice deepens: "design firmware for a battery-powered industrial sensor" — requirements, power budget, MCU choice, memory, communication, RTOS decision, storage, security, OTA, manufacturing test.
 
-**Project:** no new project — this phase refactors `hal/` and `sensor-hub/` in place into explicit `drivers/`, `kernel/`, `middleware/`, `application/` layers, under the existing test suite. `sensor-core/` is untouched by this reorganization (it's already a clean, standalone library) — the layering applies to how `sensor-hub/` composes `sensor-core/`, `hal/`, and the RTOS, not to `sensor-core/` itself. Real engineering teams harden systems far more than they greenfield them; this is that skill, not a fresh template nobody depends on.
+**Project:** no new project — this phase refactors `hal/` and `sensor-hub/` in place into explicit `drivers/`, `kernel/`, `middleware/`, `application/` layers, under the existing test suite. `sensor-core/` is untouched (already a clean, standalone library). Real engineering teams harden systems far more than they greenfield them; this is that skill.
 
 ### Phase 5 — Performance Engineering (Weeks 21-24)
 

@@ -8,7 +8,7 @@ Day themes as in [ROADMAP.md](../ROADMAP.md#weekly-schedule). Algorithms continu
 
 Toolchain introduced this phase, taught from first use (Rule 5 — nothing is magic): CMake project structure, GoogleTest, clang-format, clang-tidy.
 
-**Project framing:** the device being built across all 28 weeks is an environmental/condition-monitoring sensor node — it reads sensors, evaluates their readings against thresholds, logs data, and exposes a CLI. This phase builds that application logic entirely in software, against `hal/mock/`, with zero hardware — the same reason a vending machine would have been PC-only, but every line written here survives for the rest of the roadmap instead of being discarded. Repo location: `projects/sensor-core/`. This is a permanent library, not a phase-1-only exercise: Phase 3 onward links against it from `projects/sensor-hub/` rather than rewriting or renaming it — see [Repository Structure](../ROADMAP.md#repository-structure) for the full split.
+**Project framing:** the device being built across all 28 weeks is an environmental/condition-monitoring sensor node — it reads sensors, evaluates their readings against thresholds, logs data, and exposes a CLI. This phase builds that application logic entirely in software, against `hal/mock/`, with zero hardware. Repo location: `projects/sensor-core/` — a permanent library that Phase 3 onward links against from `projects/sensor-hub/` (see [Repository Structure](../ROADMAP.md#repository-structure)).
 
 ---
 
@@ -43,19 +43,19 @@ This is the first week using CMake, GoogleTest, clang-format, and clang-tidy for
 **Deliverables:**
 - Note + small experiment on copy vs. move: a class with an expensive-to-copy member (e.g., a buffer of sensor samples), implement copy constructor/assignment and move constructor/assignment, and demonstrate (with logging or a test) that move is actually taken by the compiler where expected.
 - **Before writing any `hal/` interface, read/write a short note in `notes/architecture/` on interfaces and dependency injection specifically** (what problem DI solves, why code should depend on an abstraction instead of a concrete hardware type) — this is pulled forward from what would otherwise be Week 6's SOLID material, because the exercise below requires understanding DI first, not after.
-- Design and implement `IGpio`, `ILed`, `IButton` interfaces in `hal/include/`, plus their mock backend in `hal/mock/`, applying the DI note directly: application code depends on the interface, never on `hal/mock/` concrete types. This is the "Firmware Simulator" from the original scope — deliberately simple, but backed by GoogleTest unit tests (Rule 3) from day one.
+- Design and implement `Gpio`, `Led`, `Button` interfaces in `hal/include/`, plus their mock backend in `hal/mock/`, applying the DI note directly: application code depends on the interface, never on `hal/mock/` concrete types. This is the "Firmware Simulator" from the original scope — deliberately simple, but backed by GoogleTest unit tests (Rule 3) from day one.
 - **Project start — `sensor-core` (`projects/sensor-core/`):** top-level state machine skeleton (states: `Boot`, `SelfTest`, `Sampling`, `Fault`) plus tests for state transitions. No real sensor reading logic yet — the state machine is exercised with fake/injected values.
 
-**Friday architecture prompt:** "Why does a hardware interface (`IGpio`) benefit from dependency injection instead of the application code calling hardware functions directly?"
+**Friday architecture prompt:** "Why does a hardware interface (`Gpio`) benefit from dependency injection instead of the application code calling hardware functions directly?"
 
 ---
 
 ## Week 5 — Templates, `constexpr`, Modern Library Types
 
 **Deliverables:**
-- An `ISensor` interface (returns a reading + status) designed using this week's material directly: `std::optional<Reading>` for "no data available yet," `std::span<const std::byte>` or similar for raw sample buffers, `std::string_view` for sensor names/units — each choice justified in a short note answering what problem it solves versus the pre-C++17 alternative, and the cost of getting it wrong (e.g., a dangling `string_view`).
+- A `Sensor` interface (returns a reading + status) designed using this week's material directly: `std::optional<Reading>` for "no data available yet," `std::span<const std::byte>` or similar for raw sample buffers, `std::string_view` for sensor names/units — each choice justified in a short note answering what problem it solves versus the pre-C++17 alternative, and the cost of getting it wrong (e.g., a dangling `string_view`).
 - A basic template exercise directly reused by the project: a fixed-capacity ring buffer template (`RingBuffer<T, N>`) — this is the same structure `sensor-core` will use to hold recent samples, and later becomes the backbone of Phase 5's logger. Explain compile-time vs. runtime cost versus a non-template equivalent.
-- **`sensor-core` — Week 5 milestone:** wire a mock `ISensor` into the state machine; `Sampling` state pulls readings via the injected interface into the `RingBuffer` from this week's exercise, with tests.
+- **`sensor-core` — Week 5 milestone:** wire a mock `Sensor` into the state machine; `Sampling` state pulls readings via the injected interface into the `RingBuffer` from this week's exercise, with tests.
 
 **Friday architecture prompt:** "When would you choose a template over a virtual-function interface for hardware abstraction, and when is that the wrong call?"
 
@@ -70,7 +70,7 @@ Week 4 already introduced dependency injection as a practical necessity for `hal
 - Refactor pass on `hal/` and `sensor-core`: identify at least one place inheritance was reached for where composition would be cleaner, and make the change — document the before/after reasoning (this is the Refactor loop, not optional polish).
 - **`sensor-core` — Week 6 milestone:** threshold/alerting logic (a reading outside configured bounds transitions the state machine toward `Fault` or raises an alert record) plus config loading (thresholds, sample interval from a simple struct or file).
 
-**Friday architecture prompt:** "Walk through how you'd inject a mock `IUart` into the sensor node's debug console for testing, without the application code knowing it's not talking to real hardware."
+**Friday architecture prompt:** "Walk through how you'd inject a mock `Uart` into the sensor node's debug console for testing, without the application code knowing it's not talking to real hardware."
 
 ---
 
@@ -93,12 +93,12 @@ Focus: linked lists, stacks, queues. Track in `algorithms/leetcode/` per the [Al
 
 ## Exit criteria for Phase 1
 
-- `hal/` exists with `IGpio`/`ILed`/`IButton`/`ISensor` interfaces, a mock backend, and passing GoogleTest coverage.
+- `hal/` exists with `Gpio`/`Led`/`Button`/`Sensor` interfaces, a mock backend, and passing GoogleTest coverage.
 - `sensor-core` project complete: state machine, sensor ingestion via `RingBuffer<T, N>`, threshold/alerting, config, UART CLI, fault recovery — all tested, all running against `hal/mock/` with zero hardware.
 - CMake + Ninja + GoogleTest + clang-format + clang-tidy all working and understood, not just copy-pasted.
 - Comfortable explaining RAII, move semantics, and composition-over-inheritance choices made in this phase's code.
 - Comfortable choosing between `unique_ptr`, `shared_ptr`, a raw pointer/reference, and no dynamic allocation at all — and explaining why, specifically in an embedded context.
 
-**What carries forward:** `sensor-core` — its state machine, `ISensor` interface, and `RingBuffer` — is the application library Phase 2 puts on real hardware (unmodified) and Phase 3 links into a new `sensor-hub/` project alongside FreeRTOS. `sensor-core/` itself is never renamed, rewritten, or thrown away — it stays a standalone, hardware-agnostic library for the rest of the roadmap.
+**What carries forward:** `sensor-core` — its state machine, `Sensor` interface, and `RingBuffer` — is the application library Phase 2 puts on real hardware (unmodified) and Phase 3 links into a new `sensor-hub/` project alongside FreeRTOS. `sensor-core/` itself is never renamed, rewritten, or thrown away — it stays a standalone, hardware-agnostic library for the rest of the roadmap.
 
 Move to [Phase 2](phase-2-embedded-fundamentals.md) once these hold.

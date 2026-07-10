@@ -10,9 +10,9 @@ This file is the operating manual for using an AI coding agent (Claude Code or s
 - **[phases/phase-N-*.md](phases/)** — the file for whichever phase you're currently in. This has the actual weekly deliverables, Friday prompts, and exit criteria you're working against right now.
 - **This file (AGENT-GUIDE.md)** — how to actually run a session. Not a memory system by itself — see below for how state gets tracked.
 
-**You do not have a separate progress-tracking file yet, and that's deliberate.** Progress lives in two places that already exist for other reasons: `git log` (what got built and when) and the dated retro notes in `notes/` (what you learned and decided each week, per Rule 4). The agent reconstructs "where am I" from those two sources every session — see the Start-of-Session prompt below. If this ever feels insufficient (e.g., you're losing track of which week you're on), that's a signal to add a lightweight `PROGRESS.md`, not a sign you're doing it wrong — but don't add one preemptively.
+**There's no separate progress-tracking file, and that's deliberate.** Progress lives in two places that already exist for other reasons: `git log` (what got built and when) and the dated retro notes in `notes/` (what you learned and decided each week, per Rule 4). The agent reconstructs "where am I" from those two sources every session — see Session Start below. If this ever feels insufficient, that's a signal to add a lightweight `PROGRESS.md`, not a sign you're doing it wrong — just don't add one preemptively.
 
-This only works if commits and retro notes follow a **consistent, greppable format** — that's the entire point of not having a separate tracker file. The next section, "The exact spec," is that format. Follow it precisely, not approximately, or the "reconstruct from git + notes" trick stops working.
+This only works if commits and retros follow a consistent, greppable format. That format is the next section, "The exact spec" — follow it precisely, or the reconstruct-from-git trick stops working.
 
 ---
 
@@ -26,15 +26,15 @@ This repo uses **[Conventional Commits](https://www.conventionalcommits.org/)** 
 
 **Format:** `<type>(p<phase>w<week>): <short description>`
 
-- `<type>` is one of the standard Conventional Commits types: `feat` (new functionality), `fix` (bug fixes — including deliberately-introduced-then-fixed bugs from Phase 2/3's concurrency exercises), `test` (tests added/changed), `refactor` (restructuring with no behavior change — Thursday's optimize/refactor work), `docs` (notes, README updates, retros), `perf` (a change specifically made to improve performance, with before/after numbers — Phase 5's DMA/cache/allocator work), `chore` (toolchain/build config, CI, formatting setup — Week 3 and Week 8's toolchain bring-up).
-- `(p<phase>w<week>)` is the scope: phase number (0-6) and absolute week number (1-28), both straight from the current phase file's header — e.g. Phase 1 Week 4 is `(p1w4)`. This is the one project-specific convention layered on top of the standard, and it's what makes `git log` greppable by week.
-- `<short description>` is a real, specific, imperative-mood description — not "progress" or "updates."
-- This project doesn't use experiments/ writeups as their own commit type — an experiment's code and its `test` commits use `test` or `feat` as appropriate; the write-up itself (hypothesis → implementation → measurement → conclusion) is `docs`.
+- `<type>`: `feat` (new functionality), `fix` (bug fixes, including deliberately-introduced-then-fixed bugs from Phase 2/3's concurrency exercises), `test` (tests added/changed), `refactor` (restructuring, no behavior change), `docs` (notes, README updates, retros), `perf` (a change made specifically to improve performance, with before/after numbers), `chore` (toolchain/build config, CI, formatting setup).
+- `(p<phase>w<week>)` is the scope: phase number (0-6) and absolute week number (1-28), straight from the current phase file's header — e.g. Phase 1 Week 4 is `(p1w4)`. This is what makes `git log` greppable by week.
+- `<short description>`: real, specific, imperative-mood — not "progress" or "updates."
+- Experiments don't get their own commit type — the code and its tests use `test`/`feat` as appropriate; the writeup (hypothesis → implementation → measurement → conclusion) is `docs`.
 
 **Examples:**
 ```
 test(p0w1): benchmark custom memcpy against stdlib
-feat(p1w4): add IGpio, ILed, IButton interfaces and mock backend
+feat(p1w4): add Gpio, Led, Button interfaces and mock backend
 test(p1w4): cover sensor-core state machine transitions
 fix(p3w17): diagnose and fix deliberately-induced priority inversion
 docs(p3w17): write CFSR/HFSR fault register note
@@ -43,9 +43,9 @@ perf(p5w21): add DMA-backed SPI transfer, cutting CPU time 40% vs interrupt-driv
 chore(p1w3): scaffold CMake + GoogleTest + clang-format/tidy config
 ```
 
-**Frequency — commit small and often, not once at the end of the day.** Rule 2 says "tiny commits," which means: one commit per logical unit of work (one interface implemented, one test file passing, one bug fixed), not one giant commit at day's end. A realistic day produces 2-5 commits. If you only ever make one commit per day, your commits are too big — split them. Never let uncommitted work span a session boundary if you can help it (see Session End step 1 in the section above) — an interrupted, uncommitted day is exactly the kind of gap the git-log-reconstruction trick can't recover from.
+**Frequency — commit small and often, not once at the end of the day.** One commit per logical unit of work (an interface implemented, a test file passing, a bug fixed). A realistic day produces 2-5 commits; if you're only making one per day, split it up. Never let uncommitted work span a session boundary if you can help it — an interrupted, uncommitted day is exactly the gap the git-log-reconstruction trick can't recover from.
 
-**What NOT to do:** don't commit broken/non-building code with intent to fix it "in the next commit" — each commit should leave the repo in a working state, per Rule 3's spirit. If you need to checkpoint genuinely broken in-progress work across a session boundary, say so explicitly to the agent next session rather than relying on it to infer that from a commit message.
+**What NOT to do:** don't commit broken/non-building code meaning to fix it "in the next commit" — each commit should leave the repo working, per Rule 3's spirit. If you must checkpoint genuinely broken work across a session boundary, say so explicitly to the agent next session rather than relying on it to infer that from the commit message.
 
 ### Retro notes (Rule 4 — weekly, process-level reflection)
 
@@ -79,17 +79,17 @@ chore(p1w3): scaffold CMake + GoogleTest + clang-format/tidy config
 (exam-week pause, schedule deviation, anything next session needs to know that isn't captured above)
 ```
 
-**When to write one:** at the end of every week, once that week's deliverables are actually done — not necessarily on a calendar Sunday, since weeks are content units per the Pacing & Calendar section, not fixed calendar slots. If a week spans multiple calendar weeks (exam-week stretch, hardware delay), the retro still happens once, when the week's content actually closes.
+**When to write one:** at the end of every week, once that week's deliverables are actually done — not necessarily a calendar Sunday, since weeks are content units, not fixed calendar slots. If a week spans multiple calendar weeks (exam stretch, hardware delay), the retro still happens once, when the content actually closes.
 
-**Answer the four questions yourself, in your own words, before or during the session — don't let the agent write these for you.** The agent's job is to ask the four questions one at a time and transcribe your answers into the file; if the agent starts drafting the answers, stop it and answer yourself. This file is the thing next session's agent reads to reconstruct "where you left off," and it's also the thing that makes the Post-Week-28 cumulative block and future interview prep actually work — a retro you didn't really write is worse than a short honest one.
+**Answer the four questions yourself, in your own words — don't let the agent write these for you.** The agent's job is to ask them one at a time and transcribe your answers; if it starts drafting answers, stop it. This file is what next session's agent reads to reconstruct "where you left off," and what makes the Post-Week-28 cumulative block work later — a retro you didn't really write is worse than a short honest one.
 
 ### Daily/content notes (distinct from retros — don't conflate them)
 
-Most weeks already specify content notes as part of that week's deliverables — e.g. "note in `notes/architecture/` on interfaces and dependency injection" (Phase 1 Week 4), "note in `notes/embedded/` on PWM, capture/compare, and timer overflow" (Phase 2 Week 8). These are **not** the retro — they're technical writeups answering Rule 5's "why does this exist, what problem does it solve" for a specific concept, and they live in the topic-specific subdirectory the phase file names (`notes/modern-cpp/`, `notes/embedded/`, `notes/architecture/`, `notes/computer-science/`, `notes/reliability/`), not in `notes/retros/`.
+Most weeks already specify content notes as part of that week's deliverables — e.g. "note in `notes/architecture/` on interfaces and dependency injection" (Phase 1 Week 4). These are **not** retros — they're technical writeups answering Rule 5's "why does this exist, what problem does it solve," and they live in the topic subdirectory the phase file names (`notes/modern-cpp/`, `notes/embedded/`, `notes/architecture/`, `notes/computer-science/`, `notes/reliability/`), not in `notes/retros/`.
 
-**Naming for content notes:** `notes/<topic>/<short-topic-slug>.md` — e.g. `notes/architecture/dependency-injection.md`, `notes/embedded/pwm-and-timers.md`. No date prefix needed on these (unlike retros) since they're reference material you may revisit and edit, not a dated log entry — but do add a one-line "last updated" note at the top if you substantially revise one later (e.g. after Week 6 generalizes the Week 4 DI note into full SOLID).
+**Naming:** `notes/<topic>/<short-topic-slug>.md` — e.g. `notes/architecture/dependency-injection.md`. No date prefix, since these are reference material you may revisit and edit, not a dated log entry — but add a one-line "last updated" note at the top if you substantially revise one later.
 
-**Do you need to write something every single session, even on days with no named "note" deliverable?** No — only write a content note when the phase file's deliverables for that day/week actually call for one. Don't manufacture a note just to have something to commit; an empty ritual note is worse than no note, and it clutters what should be a small, high-signal set of writeups you'd actually want to hand an interviewer.
+**Only write a content note when the phase file's deliverables actually call for one.** Don't manufacture one just to have something to commit — an empty ritual note is worse than no note.
 
 ### Quick reference: what goes where
 
