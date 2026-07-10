@@ -1,50 +1,34 @@
 ← [ROADMAP.md](../ROADMAP.md)
 
-# Phase 0 — Raw C Refresher (Weeks 1-2)
+# Phase 0 — C Fluency Validation Gate (Week 1)
 
-**Goal:** Rebuild core muscle memory — bits, pointers, memory layout — before introducing C++ or hardware complexity. Nothing here is new material; it's fluency work.
+**Goal:** Confirm bit manipulation, pointer arithmetic, and memory-layout reasoning are truly automatic before starting modern C++ — not to teach this material, since two years of professional STM32 firmware work in C already covers it. This phase is a fast checkpoint, not a curriculum. If anything below genuinely surfaces a gap, that's real signal and worth spending real time on; if it's all fluent (expected), move on without guilt.
 
-Day themes (see [ROADMAP.md](../ROADMAP.md#weekly-schedule) for the standing Mon-Sun pattern): Monday=Learn, Tuesday=Implement, Wednesday=Debug/break things, Thursday=Optimize/refactor, Friday=Architecture interview practice, Saturday=long project session, Sunday=retro. Algorithms practice (30-45 min) happens daily regardless of theme.
-
-Repo location for this phase's work: `experiments/cpp/` and `algorithms/leetcode/`. No `projects/` or `hal/` work starts yet — that begins Phase 1.
+Repo location for this week's work: `experiments/cpp/` and `algorithms/leetcode/`. No `projects/` or `hal/` work starts yet — that begins Phase 1.
 
 ---
 
-## Week 1 — Bits and Pointers
+## Week 1 — Validation Gate
 
-**Deliverables by end of week:**
-- A small `bitops` exercise set: set/clear/toggle/test individual bits and multi-bit fields on an unsigned integer, done without looking up bit-trick references.
-- A pointer exercises file: pointer arithmetic across arrays, pointer-to-pointer, casting a raw buffer between `uint8_t*`/`uint16_t*`/`uint32_t*` and reasoning about the resulting byte layout.
-- Written note in `notes/computer-science/` explaining, in your own words, why embedded code leans on bitfields/masks instead of arrays of bools.
+**Monday-Tuesday: self-check, no reference material.**
+- Timed, no-lookup: bit set/clear/toggle/test on a multi-bit field, pointer arithmetic across a 2D array, casting a raw buffer between `uint8_t*`/`uint16_t*`/`uint32_t*` and reasoning about resulting byte layout, and stating from memory which segment (stack/heap/data/BSS) a given variable lives in. If every one of these is immediate and correct: done, move to Wednesday's stretch exercise. If something genuinely hesitates: spend the rest of the day closing that specific gap, not the whole topic.
+- `experiments/memory/custom-memcpy/`: your own `memcpy`/`memset`, correctness-tested against the standard library versions, benchmarked, with a short hypothesis → implementation → measurement → conclusion writeup on why the standard library versions are faster or slower (word-sized copies, alignment handling, `restrict`). This one's worth keeping even at fluency, since the benchmarking/writeup discipline (not the C itself) is the actual skill being reinforced, and it's referenced again in Phase 5's bootloader work.
 
-**Friday architecture prompt:** "Why would a peripheral register be documented as a 32-bit word with named bitfields instead of 32 individual boolean flags?"
+**Wednesday: architecture-level stretch, since the mechanics are assumed solid.** Answer, in writing: "A piece of startup code needs to copy a firmware image from flash to RAM before the rest of the program can safely run. What has to be true about that copy for it to be safe — alignment, overlap, size? What would you check in a code review of that routine?" This is the same question a bootloader review would raise (Phase 5) — answering it now from professional instinct, not new instruction.
 
-**Sunday retro:** answer the four standard retro questions (learned / confused / do differently / open questions) in `notes/`, dated.
+**Thursday onward:** move directly into [Phase 1](phase-1-modern-cpp.md). The two days reclaimed here are spent in Phase 1's new Week 2 on the material this background doesn't already cover — modern C++ and the toolchain.
 
----
-
-## Week 2 — Memory Layout and Custom memcpy/memset
-
-**Deliverables by end of week:**
-- A short program that prints the addresses of a stack variable, a heap allocation, a global initialized variable, and a global uninitialized variable — and a note explaining which segment (stack/heap/data/BSS) each lives in and why.
-- `experiments/memory/custom-memcpy/`: your own `memcpy` and `memset` implementations, correctness-tested against the standard library versions (same output for varied sizes/alignments), then benchmarked against them. Write up the experiment using the hypothesis → implementation → measurement → conclusion structure from [ROADMAP.md](../ROADMAP.md#repository-structure).
-- Explain (out loud or in writing, per the Four Loops) why the standard library versions are faster or slower than yours, and what techniques (word-sized copies, alignment handling, `restrict`) account for the difference.
-
-**Friday architecture prompt:** "A bootloader needs to copy a firmware image from flash to RAM before jumping to it. What has to be true about that copy for it to be safe?"
-
-**Sunday retro + Phase 0 close-out:** confirm bit manipulation and pointer arithmetic feel automatic (no hesitation, no lookup) before moving to Phase 1. If not yet automatic, it is fine to extend Phase 0 by a few days rather than move on with a shaky foundation — flag this explicitly rather than silently falling behind schedule.
+**Sunday retro:** short — confirm the gate held (or note specifically what didn't and how it was closed), dated in `notes/`.
 
 ---
 
-## Algorithms (daily, both weeks)
+## Algorithms (daily)
 
-Focus: arrays and strings. Rebuild pointer/index fluency through problems, not just raw C exercises. Track solved problems in `algorithms/leetcode/`, one file or subfolder per problem, with a one-line note on the approach and complexity.
+Focus: arrays and strings, same as the rest of the roadmap's daily practice — this isn't new, it's the standing habit starting immediately. Track in `algorithms/leetcode/` per the [Algorithm Interview Prep](../ROADMAP.md#algorithm-interview-prep) system.
 
 ## Exit criteria for Phase 0
 
-- Comfortable manipulating individual bits/bitfields without reference material.
-- Comfortable with pointer arithmetic and type-punning a raw buffer.
-- Can state, unprompted, which memory segment a given variable lives in.
+- Bit manipulation, pointer arithmetic, and memory-segment reasoning confirmed automatic (or a specific gap identified and closed) — with evidence, not assumption, since "I already know this" is exactly the claim this gate exists to check.
 - Custom `memcpy`/`memset` experiment complete with a written conclusion.
 
-Move to [Phase 1](phase-1-modern-cpp.md) once these hold.
+Move to [Phase 1](phase-1-modern-cpp.md) once these hold — expected by Wednesday or Thursday of Week 1, not Week 2.

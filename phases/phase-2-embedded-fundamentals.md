@@ -14,10 +14,13 @@ Day themes as in [ROADMAP.md](../ROADMAP.md#weekly-schedule), with one adjustmen
 
 ## Week 8 — Toolchain Bring-Up, GPIO, Timers
 
+First real hardware bring-up week — budget Monday through Wednesday for the cross-compilation toolchain alone if needed, before starting the timer/PWM material. First-time flashing setups are notoriously fiddly (driver issues, OpenOCD config, ST-Link enumeration); getting stuck here is normal, not a sign of falling behind. Same permission as Phase 0: it's fine to take longer than a strict Mon-Tue split, as long as it's tracked explicitly (Rule 4) rather than silently slipping.
+
 **Deliverables:**
-- Cross-compilation toolchain working end-to-end: a minimal `blink.elf` built with `arm-none-eabi-gcc`, flashed via OpenOCD/ST-Link, LED visibly blinking via a bare super-loop. This is the "hello world" of the phase — don't move on until it works reliably.
-- `IGpio` gains a real `hal/stm32/` backend (register-level, no vendor HAL abstraction layer yet — direct register manipulation to understand what's underneath). Mock and STM32 backends verified to satisfy the same interface.
+- Toolchain bring-up (do this first, before anything else this week): a minimal `blink.elf` built with `arm-none-eabi-gcc`, flashed via OpenOCD/ST-Link, LED visibly blinking via a bare super-loop. This is the "hello world" of the phase — don't move on until it works reliably.
+- Once bring-up works: `IGpio` gains a real `hal/stm32/` backend (register-level, no vendor HAL abstraction layer yet — direct register manipulation to understand what's underneath). Mock and STM32 backends verified to satisfy the same interface.
 - Replace the super-loop blink with a hardware timer-driven blink (no blocking delay). Note in `notes/embedded/` on PWM, capture/compare, and timer overflow.
+- **Disassembly reading:** disassemble `blink.elf` (`arm-none-eabi-objdump -d`) and walk through the generated ARM Thumb-2 assembly for a small function by hand — identify the prologue/epilogue, how arguments are passed (AAPCS calling convention: `r0`-`r3`, stack for the rest), and how a register write maps back to the C statement that produced it. Note in `notes/embedded/` covering: what a stack frame looks like on Cortex-M, and one concrete example of a C construct (a loop, a struct field access) and its assembly.
 
 **Friday architecture prompt:** "Why would you implement a HAL against raw registers first instead of starting with the vendor's HAL library (e.g., STM32 HAL/LL)?"
 
@@ -28,7 +31,7 @@ Day themes as in [ROADMAP.md](../ROADMAP.md#weekly-schedule), with one adjustmen
 **Deliverables:**
 - Polling UART driver against `IUart`, both backends (mock + STM32), tested.
 - Rewritten as interrupt-driven with a ring buffer; note explaining why polling doesn't scale and what the ring buffer solves.
-- Debug console (from the Vending Machine project) or a new minimal CLI running over real UART on the Nucleo, observed via a serial terminal on the Mac.
+- Port `sensor-core`'s debug console/CLI (from Phase 1) onto real UART on the Nucleo — same command surface, now talking to `hal/stm32/`'s UART backend instead of the mock, observed via a serial terminal on the Mac.
 
 **Friday architecture prompt:** "What happens to a UART receive buffer if the application doesn't drain it fast enough, and how would you detect/handle that?"
 
@@ -38,7 +41,8 @@ Day themes as in [ROADMAP.md](../ROADMAP.md#weekly-schedule), with one adjustmen
 
 **Deliverables:**
 - `ISpi` interface + mock backend + STM32 backend (master mode, chip-select handling).
-- Communicate with a real SPI sensor or peripheral (whatever's available/cheap to acquire — e.g., an SPI-based accelerometer or flash chip) — read a real register/ID value over the bus and print it via UART.
+- Communicate with a real SPI sensor (e.g., an SPI-based accelerometer) — read a real register/ID value over the bus and print it via `sensor-core`'s CLI (Week 9).
+- Implement a concrete `ISensor` backend for this sensor (satisfying the `ISensor` interface from Phase 1 Week 5) so `sensor-core` can read it through the same abstraction it used for mock data — first real hardware plugged into the library built in Phase 1.
 - Note on SPI vs. UART trade-offs (clocked vs. asynchronous, addressing/CS, throughput).
 
 **Friday architecture prompt:** "Compare SPI and I2C for a sensor that needs high sample rate — what would push you toward one or the other?"
@@ -48,9 +52,9 @@ Day themes as in [ROADMAP.md](../ROADMAP.md#weekly-schedule), with one adjustmen
 ## Week 11 — I2C and ADC
 
 **Deliverables:**
-- `II2c` interface + both backends: addressing, ACK/NACK, repeated start understood and demonstrated against a real I2C sensor.
+- `II2c` interface + both backends: addressing, ACK/NACK, repeated start understood and demonstrated against a real I2C sensor (e.g., a temperature/humidity sensor) — implemented as a second `ISensor` backend, so `sensor-core` now reads two independent real sensors through the same interface.
 - Note covering clock stretching, bus recovery, and timeout handling — what happens when an I2C bus hangs, and how firmware detects/recovers from it.
-- `IAdc` (or extend an existing interface) + both backends: sample a real analog signal (e.g., a potentiometer or onboard sensor), and write a short experiment on sampling theory/aliasing (Nyquist) — undersample a known signal on purpose and observe the aliased result.
+- `IAdc` (or extend an existing interface) + both backends: sample a real analog signal (e.g., a potentiometer or light sensor), wired in as a third `ISensor` backend. Write a short experiment on sampling theory/aliasing (Nyquist) — undersample a known signal on purpose and observe the aliased result.
 
 **Friday architecture prompt:** "Why does I2C need pull-up resistors and open-drain outputs, and what problem does that design solve versus a push-pull bus like SPI?"
 
@@ -77,7 +81,9 @@ Focus: trees, basic graph traversal (DFS/BFS).
 
 - `arm-none-eabi-gcc` + OpenOCD + ST-Link toolchain works reliably for build-flash-debug.
 - `hal/` has real STM32 backends for GPIO, Timer, UART, SPI, I2C, ADC, all verified against the same interfaces as their mock counterparts.
+- `sensor-core` from Phase 1 now runs on the Nucleo, reading at least two real sensors (SPI + I2C) through concrete `ISensor` backends, with its CLI reachable over real UART. Still `sensor-core/` — no RTOS, no new project directory yet.
 - Comfortable explaining, unaided, how each protocol works and why it exists versus its alternatives.
 - At least one deliberately-introduced concurrency bug (ISR/main-loop race) found and fixed with understanding, not guesswork.
+- Can read Cortex-M/ARM Thumb-2 disassembly for a simple function and explain the stack frame and calling convention, unaided.
 
 Move to [Phase 3](phase-3-rtos.md) once these hold.
