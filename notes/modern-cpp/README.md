@@ -1,0 +1,1 @@
+This documents the modern C++ concepts required to write reliable embedded software.
